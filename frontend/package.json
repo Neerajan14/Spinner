@@ -1,0 +1,28 @@
+{
+  "name": "spinning-wheel",
+  "version": "1.0.0",
+  "description": "Vue.js spinning wheel with probability distribution",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "netlify dev:exec drizzle-kit migrate",
+    "db:studio": "netlify dev:exec drizzle-kit studio"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^10.7.0",
+    "@netlify/functions": "^5.1.2",
+    "@netlify/neon": "^0.1.2",
+    "axios": "^1.13.5",
+    "canvas-confetti": "^1.9.4",
+    "drizzle-orm": "^0.45.1",
+    "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+    "drizzle-kit": "^0.31.9",
+    "vite": "^4.3.9"
+  }
+}
