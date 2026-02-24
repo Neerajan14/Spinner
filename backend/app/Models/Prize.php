@@ -12,4 +12,9 @@ class Prize extends Model
         'price',
         'active',
     ];
+
+    public function wins()
+    {
+        return $this->hasMany(UserWin::class, 'prize_id');
+    }
 }

@@ -31,9 +31,18 @@ class User extends Authenticatable
         ];
     }
 
-    // ✅ Add this
     public function spins()
     {
         return $this->hasMany(Spin::class);
+    }
+
+    public function wins()
+    {
+        return $this->hasMany(UserWin::class);
+    }
+
+    public function prizes()
+    {
+        return $this->hasManyThrough(Prize::class, UserWin::class, 'user_id', 'id', 'id', 'prize_id');
     }
 }

@@ -1,15 +1,20 @@
-<?php 
+<?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\UserWinController;
 use App\Http\Controllers\Api\SpinController;
 use App\Http\Controllers\Api\UserController;
 
+// User Win routes
+Route::apiResource('user-wins', UserWinController::class);
+Route::get('/user/{userId}/wins', [UserWinController::class, 'getUserWins']);
+Route::post('/user-wins/create', [UserWinController::class, 'store']);
+
+// Other routes
 Route::get('/prizes', [SpinController::class, 'prizes']);  
 Route::post('/spin', [SpinController::class, 'spin']);     
 Route::post('/store-spin', [SpinController::class, 'store']); 
 Route::get('/spins', [SpinController::class, 'index']);
 
-// User routes
-Route::post('/store-user', [UserController::class, 'store']); // Save user
-Route::get('/users', [UserController::class, 'index']);       // Fetch all users
+Route::post('/store-user', [UserController::class, 'store']);
+Route::get('/users', [UserController::class, 'index']);
