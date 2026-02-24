@@ -616,7 +616,7 @@ defineExpose({
     transform: scale(0.5) rotateZ(-180deg);
   }
   to {
-    opacity: 1;
+    opacity: 100;
     transform: scale(1) rotateZ(0deg);
   }
 }
@@ -709,7 +709,7 @@ defineExpose({
   height: 100%;
   border-radius: 50%;
   background: radial-gradient(circle, transparent 40%, rgba(0, 0, 0, 0.4));
-  filter: blur(25px);
+  filter: blur(25px); 
   transform: translateY(15px);
 }
 
@@ -718,6 +718,7 @@ defineExpose({
   height: 100%;
   filter: drop-shadow(0 15px 40px rgba(0, 0, 0, 0.4));
   transition: filter 0.3s ease;
+  z-index: 10;
 }
 
 .wheel-svg:hover .center-button circle:first-child {

@@ -1,5 +1,5 @@
 <template>
-  <div class="app">
+  <div class="app"> 
     <RegistrationList v-if="showParticipantsList"/>
 
     <UserForm
@@ -44,27 +44,91 @@ const userData = ref(null)
 
 // Define wheel items with probability weights and prices
 const wheelItems = ref([
-  {label: 'Pen 🖊️', weight: 65, price: '$5'},
-  {label: 'Diary 📔', weight: 8.75, price: '$15'},
-  {label: 'Stickers 🏷️', weight: 8.75, price: '$8'},
-  {label: 'Key Ring 🗝️', weight: 8.75, price: '$12'}, // keyring loop style
-  {label: 'Lanyard 🎗️', weight: 8.75, price: '$10'}
+  {id: 1, label: 'Pen 🖊️', weight: 65, price: '$5'},
+  {id: 2, label: 'Diary 📔', weight: 8.75, price: '$15'},
+  {id: 3, label: 'Stickers 🏷️', weight: 8.75, price: '$8'},
+  {id: 4, label: 'Key Ring 🗝️', weight: 8.75, price: '$12'}, // keyring loop style
+  {id: 5, label: 'Lanyard 🎗️', weight: 8.75, price: '$10'}
 ])
 
 
 //this is to handel form data
-function handleFormSubmit(data) {
-  userData.value = data
+async function handleFormSubmit(data) {
+  try {
+    const res = await axios.post('http://127.0.0.1:8000/api/store-user', data)
+    userData.value = { ...data, id: res.data.id } // ✅ stores user id
+  } catch (err) {
+    console.error('Error storing user:', err)
+    userData.value = data // fallback
+  }
+
   showWheel.value = true
-  console.log(showWheel.value)
+  fetchPrizesFromServer()
 }
 
 
-// Handle spin completion
-function handleSpinFinish(item) {
-  console.log(item, userData.value)
-  axios.post('.netlify/functions/update', {id: userData.value.id, won_item: item.label})
+// Fetch prizes dynamically from Laravel API
+async function fetchPrizesFromServer() {
+  try {
+    const res = await axios.get('http://127.0.0.1:8000/api/prizes')
+    console.log('API response:', res.data)
+    wheelItems.value = res.data.data ?? res.data
+  } catch (err) {
+    console.error('Error fetching prizes:', err)
+  }
 }
+
+// Server-controlled spin
+async function spinFromServer() {
+  try {
+    const res = await axios.post('http://127.0.0.1:8000/api/spin', {
+      user_name: userData.value.name,      // ✅ use form fields instead of .id
+      user_email: userData.value.email,
+      user_number: userData.value.number,
+      user_address: userData.value.address,
+    })
+    const winner = res.data
+
+    // Find index of winner in wheelItems
+    const index = wheelItems.value.findIndex(p => p.id === winner.id)
+
+    if (index !== -1) {
+      // Trigger wheel spin to server-selected index
+      wheelRef.value.spinTo(index)
+    }
+  } catch (err) {
+    console.error('Error spinning:', err)
+  }
+}
+
+// Handle spin finish
+async function handleSpinFinish(item) {
+  console.log('User won:', item, userData.value)
+
+  // ✅ If item is a string label, find the full object
+  const prize = typeof item === 'string'
+    ? wheelItems.value.find(p => p.label === item)
+    : item
+
+  if (!prize) {
+    console.error('Could not resolve prize from:', item)
+    return
+  }
+
+  // Store result in backend if needed
+  try {
+    await axios.post('http://127.0.0.1:8000/api/store-spin', {
+      prize_id: item.id,
+      user_name: userData.value.name,       // ✅ use actual form fields
+      user_email: userData.value.email,
+      user_number: userData.value.number,
+      user_address: userData.value.address,
+    })
+  } catch (err) {
+    console.error('Error storing spin result:', err)
+  }
+}
+
 
 </script>
 

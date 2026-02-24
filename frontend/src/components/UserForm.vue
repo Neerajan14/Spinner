@@ -190,7 +190,7 @@ const submitForm = async () => {
     }
 
     // const resp = await axios.post('.netlify/functions/create', formData, {
-    const resp = await axios.post(`${API}/create`, formData, {
+    const resp = await axios.post('http://127.0.0.1:8000/api/store-user', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -208,7 +208,9 @@ const submitForm = async () => {
 
   } catch (error) {
     console.error(error)
-    alert('Something went wrong. Please try again.')
+  
+    // alert('Something went wrong. Please try again.')
+    alert( error )
   } finally {
     loading.value = false
   }

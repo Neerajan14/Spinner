@@ -6,7 +6,7 @@ const registrants = ref([])
 
 onMounted(async () => {
   try {
-    const resp = await axios.get(`${API}/index`)
+    const resp = await axios.get('http://127.0.0.1:8000/api/users')
     // const resp = await axios.get('{.netlify/functions/index}')
     registrants.value = resp.data
   } catch (error) {
