@@ -9,6 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('spins', function (Blueprint $table) {
+            $table->foreignId('user_id')->nullable()->after('prize_id')->constrained()->onDelete('set null');
             $table->string('user_name')->nullable();
             $table->string('user_email')->nullable();
             $table->string('user_number')->nullable();
@@ -19,7 +20,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('spins', function (Blueprint $table) {
-            $table->dropColumn(['user_name', 'user_email', 'user_number', 'user_address']);
+            $table->dropColumn(['user_id', 'user_name', 'user_email', 'user_number', 'user_address']);
         });
     }
 };

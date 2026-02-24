@@ -12,6 +12,21 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('prize_id');
+
+            // Snapshot of user data
+            $table->string('user_name')->nullable();
+            $table->string('user_email')->nullable();
+            $table->string('user_number')->nullable();
+            $table->string('user_interested')->nullable();
+            $table->string('user_address')->nullable();
+            $table->string('user_resume_file_name')->nullable();
+
+            // Snapshot of prize data
+            $table->string('prize_label')->nullable();
+            $table->float('prize_weight')->nullable();
+            $table->string('prize_price')->nullable();
+            $table->boolean('prize_active')->nullable();
+
             $table->timestamps();
             
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

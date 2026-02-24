@@ -8,7 +8,6 @@ use App\Http\Controllers\Api\UserController;
 // User Win routes
 Route::apiResource('user-wins', UserWinController::class);
 Route::get('/user/{userId}/wins', [UserWinController::class, 'getUserWins']);
-Route::post('/user-wins/create', [UserWinController::class, 'store']);
 
 // Other routes
 Route::get('/prizes', [SpinController::class, 'prizes']);  
