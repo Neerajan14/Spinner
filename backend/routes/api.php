@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserWinController;
 use App\Http\Controllers\Api\SpinController;
@@ -8,6 +7,7 @@ use App\Http\Controllers\Api\UserController;
 // User Win routes
 Route::apiResource('user-wins', UserWinController::class);
 Route::get('/user/{userId}/wins', [UserWinController::class, 'getUserWins']);
+Route::post('/record-win', [UserWinController::class, 'store']);
 
 // Other routes
 Route::get('/prizes', [SpinController::class, 'prizes']);  
