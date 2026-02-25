@@ -47,7 +47,25 @@ class RaffleController extends Controller
             'prize_id' => 'required|exists:prizes,id',
         ]);
 
-        $win = UserWin::create($validated);
+        $user = User::find($validated['user_id']);
+        $prize = Prize::find($validated['prize_id']);
+
+        $win = UserWin::create([
+            'user_id'               => $user->id,
+            'prize_id'              => $prize->id,
+            'user_name'             => $user->name,
+            'user_email'            => $user->email,
+            'user_number'           => $user->number,
+            'user_interested'       => $user->interested,
+            'user_address'          => $user->address,
+            'user_resume_file_name' => $user->resume_file_name,
+            'prize_label'           => $prize->label,
+            'prize_weight'          => $prize->weight,
+            'prize_price'           => $prize->price,
+            'prize_active'          => $prize->active,
+        ]);
+
+        $win->load(['user', 'prize']);
         return response()->json(['success' => true, 'data' => $win], 201);
     }
 }
