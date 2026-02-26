@@ -17,3 +17,11 @@ Route::get('/spins', [SpinController::class, 'index']);
 
 Route::post('/store-user', [UserController::class, 'store']);
 Route::get('/users', [UserController::class, 'index']);
+
+
+Route::middleware(['auth:sanctum', 'role:HR'])->group(function () {
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+});
+
+Route::middleware(['auth:sanctum', 'role:hr'])->get('/users', [UserController::class, 'index']);
