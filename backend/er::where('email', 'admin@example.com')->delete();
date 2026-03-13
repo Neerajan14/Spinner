@@ -1,0 +1,40 @@
+[90m= [39m[34;4mIlluminate\Database\Eloquent\Collection[39;24m {#6138
+    [34mall[39m: [
+      [34;4mApp\Models\User[39;24m {#5425
+        [34mid[39m: [35m7[39m,
+        [34mname[39m: "[32mNirajan Bohora[39m",
+        [34memail[39m: "[32mjohn.doe@example.comxxxccxc[39m",
+      },
+      [34;4mApp\Models\User[39;24m {#5373
+        [34mid[39m: [35m8[39m,
+        [34mname[39m: "[32mNirajan Bohora[39m",
+        [34memail[39m: "[32mjohn.doe@example.com[39m",
+      },
+      [34;4mApp\Models\User[39;24m {#5426
+        [34mid[39m: [35m9[39m,
+        [34mname[39m: "[32mNirajan Bohora[39m",
+        [34memail[39m: "[32madmin@example.comzzz[39m",
+      },
+      [34;4mApp\Models\User[39;24m {#5427
+        [34mid[39m: [35m10[39m,
+        [34mname[39m: "[32mNirajan Bohora[39m",
+        [34memail[39m: "[32madmin@example.comqqqqq[39m",
+      },
+      [34;4mApp\Models\User[39;24m {#5421
+        [34mid[39m: [35m11[39m,
+        [34mname[39m: "[32mNirajan Bohora[39m",
+        [34memail[39m: "[32madmin@example.comnnnnnn[39m",
+      },
+      [34;4mApp\Models\User[39;24m {#5420
+        [34mid[39m: [35m12[39m,
+        [34mname[39m: "[32mNirajan Bohora[39m",
+        [34memail[39m: "[32madmin@example.comffff[39m",
+      },
+      [34;4mApp\Models\User[39;24m {#5419
+        [34mid[39m: [35m13[39m,
+        [34mname[39m: "[32mNirajan Bohora[39m",
+        [34memail[39m: "[32madmin@example.com[39m",
+      },
+    ],
+  }
+
