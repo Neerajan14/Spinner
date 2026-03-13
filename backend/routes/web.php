@@ -78,3 +78,96 @@ Route::middleware('auth')->group(function () {
 Route::get('/', function () {
     return Auth::check() ? redirect('/dashboard') : redirect('/login');
 });
+
+// Export Users to CSV
+Route::get('/users/export', function () {
+    $users = \App\Models\User::all();
+    
+    $filename = 'users_' . date('Y-m-d_His') . '.csv';
+    $filepath = storage_path('app/' . $filename);
+    
+    $file = fopen($filepath, 'w');
+    
+    // Add CSV headers
+    fputcsv($file, ['ID', 'Name', 'Email', 'Phone', 'Interested In', 'Address', 'Joined Date']);
+    
+    // Add data rows
+    foreach ($users as $user) {
+        fputcsv($file, [
+            $user->id,
+            $user->name,
+            $user->email,
+            $user->number,
+            $user->interested,
+            $user->address ?? 'N/A',
+            $user->created_at->format('Y-m-d H:i:s')
+        ]);
+    }
+    
+    fclose($file);
+    
+    return response()->download($filepath)->deleteFileAfterSend(true);
+})->name('users.export');
+
+// Export User Wins to CSV
+Route::get('/user-wins/export', function () {
+    try {
+        $userWins = DB::table('user_wins')
+            ->join('users', 'user_wins.user_id', '=', 'users.id')
+            ->join('prizes', 'user_wins.prize_id', '=', 'prizes.id')
+            ->select(
+                'user_wins.id',
+                'prizes.label as prize_label',
+                'prizes.price as prize_price',
+                'users.name as user_name',
+                'users.number as user_number',
+                'users.email as user_email',
+                'users.interested as user_interested',
+                'users.address as user_address',
+                'users.resume_file_name as user_resume_file_name',
+                'user_wins.created_at'
+            )
+            ->get();
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'No data to export');
+    }
+    
+    $filename = 'user_wins_' . date('Y-m-d_His') . '.csv';
+    $filepath = storage_path('app/' . $filename);
+    
+    $file = fopen($filepath, 'w');
+    
+    // Add CSV headers
+    fputcsv($file, [
+        'ID', 
+        'Prize Won', 
+        'Prize Value', 
+        'Full Name', 
+        'Phone Number', 
+        'Email Address', 
+        'Interested In', 
+        'Address', 
+        'Has Resume',
+        'Won At'
+    ]);
+    
+    // Add data rows
+    foreach ($userWins as $win) {
+        fputcsv($file, [
+            $win->id,
+            $win->prize_label,
+            $win->prize_price,
+            $win->user_name,
+            $win->user_number,
+            $win->user_email,
+            $win->user_interested,
+            $win->user_address ?? 'N/A',
+            $win->user_resume_file_name ? 'Yes' : 'No',
+            \Carbon\Carbon::parse($win->created_at)->format('M d, Y H:i')
+        ]);
+    }
+    
+    fclose($file);
+    
+    return response()->download($filepath)->deleteFileAfterSend(true);
+})->name('user-wins.export');
