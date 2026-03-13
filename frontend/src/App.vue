@@ -8,13 +8,20 @@
     />
     
     <div v-else>
+      <!-- ✅ FIXED: Only show wheel when items exist -->
       <SpinningWheel
+          v-if="wheelItems.length > 0"
           :items="wheelItems"
           :duration="4000"
           title="🎡 Spinning Wheel - Wheel of Fortune"
           @onFinish="handleSpinFinish"
           ref="wheelRef"
       />
+      
+      <!-- ✅ Show loading or error message -->
+      <div v-else class="loading-message">
+        <p>⚠️ No prizes available. Please contact support.</p>
+      </div>
       
       <!-- ✅ Display user wins -->
       <div class="wins-container" v-if="userWins.length > 0">
@@ -66,23 +73,37 @@ onMounted(() => {
 async function handleFormSubmit(data) {
   try {
     const res = await axios.post('http://127.0.0.1:8000/api/store-user', data)
+    console.log('✅ User stored:', res.data)
     userData.value = { ...data, id: res.data.id }
   } catch (err) {
-    console.error('Error storing user:', err)
+    console.error('❌ Error storing user:', err)
+    console.error('Error details:', err.response?.data)
     userData.value = data
   }
+  
   showWheel.value = true
-  fetchPrizesFromServer()
+  await fetchPrizesFromServer()
 }
 
-// Fetch prizes dynamically from Laravel API
+// ✅ FIXED: Fetch prizes dynamically from Laravel API
 async function fetchPrizesFromServer() {
   try {
     const res = await axios.get('http://127.0.0.1:8000/api/prizes')
-    console.log('API response:', res.data)
-    wheelItems.value = res.data.data ?? res.data
+    console.log('✅ API response:', res.data)
+    
+    // ✅ Check if prizes exist
+    if (res.data.prizes && res.data.prizes.length > 0) {
+      wheelItems.value = res.data.prizes
+      console.log('✅ Loaded prizes:', wheelItems.value)
+    } else {
+      console.error('❌ Backend returned empty prizes array')
+      console.error('Using default prizes as fallback')
+      // Keep the default wheelItems defined above
+    }
   } catch (err) {
-    console.error('Error fetching prizes:', err)
+    console.error('❌ Error fetching prizes:', err)
+    console.error('Error details:', err.response?.data)
+    // Keep the default wheelItems defined above
   }
 }
 
@@ -118,36 +139,46 @@ async function handleSpinFinish(item) {
     return
   }
 
+  // ✅ FIXED: Check if user has ID before recording win
+  if (!userData.value?.id) {
+    console.error('❌ Cannot record win: User ID is missing')
+    console.error('User data:', userData.value)
+    return
+  }
+
   try {
-    
-    console.log('user_id:', userData.value?.id)
-    console.log('prize_id:', prize?.id)
-    console.log('Full prize object:', prize)
-    console.log('Full userData:', userData.value)
+    console.log('Recording win...')
+    console.log('user_id:', userData.value.id)
+    console.log('prize_id:', prize.id)
 
     const winResponse = await axios.post('http://127.0.0.1:8000/api/record-win', {
       user_id: userData.value.id,
       prize_id: prize.id
     })
     
-    console.log('Win recorded:', winResponse.data)
+    console.log('✅ Win recorded:', winResponse.data)
     await fetchUserWins()
     
   } catch (err) {
-    console.error('Error recording win:', err)
+    console.error('❌ Error recording win:', err)
+    console.error('Error details:', err.response?.data)
   }
 }
 
 // ✅ NEW: Fetch user's wins from database
 async function fetchUserWins() {
   try {
-    if (!userData.value?.id) return
+    if (!userData.value?.id) {
+      console.warn('⚠️ Cannot fetch wins: User ID is missing')
+      return
+    }
     
     const res = await axios.get(`http://127.0.0.1:8000/api/user/${userData.value.id}/wins`)
     userWins.value = res.data
-    console.log('User wins:', userWins.value)
+    console.log('✅ User wins:', userWins.value)
   } catch (err) {
-    console.error('Error fetching wins:', err)
+    console.error('❌ Error fetching wins:', err)
+    console.error('Error details:', err.response?.data)
   }
 }
 
@@ -164,6 +195,23 @@ async function fetchUserWins() {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
   padding: 20px;
+}
+
+/* ✅ NEW: Loading message styles */
+.loading-message {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 40px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 500px;
+  margin: 50px auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.loading-message p {
+  font-size: 18px;
+  color: #d32f2f;
+  font-weight: 500;
 }
 
 .wins-container {

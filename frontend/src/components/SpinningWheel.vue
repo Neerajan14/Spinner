@@ -129,7 +129,8 @@ const props = defineProps({
   items: {
     type: Array,
     required: true,
-    validator: (arr) => arr.length > 0
+    // ✅ FIXED: Allow empty array during initial render
+    validator: (arr) => Array.isArray(arr)
   },
   duration: {
     type: Number,
@@ -155,7 +156,8 @@ const animationFrameId = ref(null)
 const spinCount = ref(0)
 const lastResult = ref(null)
 
-const SLICE_COUNT = props.items.length
+// ✅ FIXED: Safely compute SLICE_COUNT
+const SLICE_COUNT = computed(() => props.items.length)
 const FULL_ROTATION = 360
 const MIN_ROTATIONS = 5
 
@@ -168,13 +170,16 @@ function getSliceColor(index) {
 }
 
 const slices = computed(() => {
+  // ✅ FIXED: Return empty array if no items
+  if (!props.items.length) return []
+  
   const totalWeight = props.items.reduce((sum, item) => {
     const weight = typeof item === 'object' ? (item.weight || 1) : 1
     return sum + weight
   }, 0)
 
   return props.items.map((item, index) => {
-    const sliceAngle = FULL_ROTATION / SLICE_COUNT
+    const sliceAngle = FULL_ROTATION / SLICE_COUNT.value
     const startAngle = (index * sliceAngle - 90) * (Math.PI / 180)
     const endAngle = ((index + 1) * sliceAngle - 90) * (Math.PI / 180)
     const radius = 180
@@ -189,12 +194,10 @@ const slices = computed(() => {
 
     const labelAngle = startAngle + (endAngle - startAngle) / 2
 
-    // Icon position (closer to center, larger)
     const iconRadius = radius * 0.45
     const iconX = 200 + iconRadius * Math.cos(labelAngle)
     const iconY = 200 + iconRadius * Math.sin(labelAngle)
 
-    // Label position (further out)
     const labelRadius = radius * 0.75
     const labelX = 200 + labelRadius * Math.cos(labelAngle)
     const labelY = 200 + labelRadius * Math.sin(labelAngle)
@@ -220,6 +223,9 @@ const slices = computed(() => {
 })
 
 function getRandomIndex() {
+  // ✅ FIXED: Guard against empty array
+  if (!props.items.length) return 0
+  
   const hasWeights = props.items.some(item => typeof item === 'object' && item.weight !== undefined)
 
   if (hasWeights) {
@@ -238,38 +244,47 @@ function getRandomIndex() {
     }
     return props.items.length - 1
   } else {
-    return Math.floor(Math.random() * SLICE_COUNT)
+    return Math.floor(Math.random() * SLICE_COUNT.value)
   }
 }
 
 function spinTo(targetIndex) {
-  if (isSpinning.value) return
+  // ✅ FIXED: Guard against empty array or spinning
+  if (isSpinning.value || !props.items.length) return
 
   lastResult.value = null
   showConfetti.value = false
   isSpinning.value = true
 
+  const winningItem = props.items[targetIndex]
+
   const currentRotation = rotation.value % 360
-  const sliceAngle = FULL_ROTATION / SLICE_COUNT
+  const sliceAngle = FULL_ROTATION / SLICE_COUNT.value
   const targetAngle = targetIndex * sliceAngle + (sliceAngle / 2)
+
   const extraRotation =
-      MIN_ROTATIONS * FULL_ROTATION +
-      (FULL_ROTATION - targetAngle) -
-      currentRotation
+    MIN_ROTATIONS * FULL_ROTATION +
+    (FULL_ROTATION - targetAngle) -
+    currentRotation
+
   const finalRotation = rotation.value + extraRotation
 
   spinCount.value++
 
   animateWheel(finalRotation, props.duration, () => {
-    lastResult.value = props.items[targetIndex]
+    lastResult.value = winningItem
     showConfetti.value = true
     triggerConfetti()
     isSpinning.value = false
-    emit('onFinish', lastResult.value)
+
+    emit('onFinish', winningItem)
   })
 }
 
 function spin() {
+  // ✅ FIXED: Guard against empty array
+  if (!props.items.length) return
+  
   const targetIndex = getRandomIndex()
   spinTo(targetIndex)
 }
@@ -471,7 +486,8 @@ function reset() {
 }
 
 onMounted(() => {
-  if (props.autoSpin) {
+  // ✅ FIXED: Only auto-spin if items exist
+  if (props.autoSpin && props.items.length > 0) {
     setTimeout(() => spin(), 500)
   }
 })

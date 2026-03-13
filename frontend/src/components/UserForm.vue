@@ -186,10 +186,8 @@ const submitForm = async () => {
 
     if (form.resume) {
       formData.append('resume', form.resume)
-      formData.append('resumeFileName', form.resumeFileName)
     }
 
-    // const resp = await axios.post('.netlify/functions/create', formData, {
     const resp = await axios.post('http://127.0.0.1:8000/api/store-user', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -207,10 +205,17 @@ const submitForm = async () => {
     })
 
   } catch (error) {
-    console.error(error)
-  
-    // alert('Something went wrong. Please try again.')
-    alert( error )
+    console.error('Full error:', error)
+    console.error('Response:', error.response?.data)
+    
+    if (error.response?.data?.errors) {
+      const errorMsg = Object.entries(error.response.data.errors)
+        .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
+        .join('\n')
+      alert('Validation errors:\n' + errorMsg)
+    } else {
+      alert('Error: ' + (error.response?.data?.message || error.message))
+    }
   } finally {
     loading.value = false
   }
