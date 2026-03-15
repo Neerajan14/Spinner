@@ -137,10 +137,25 @@
             color: #3b82f6;
             text-decoration: none;
             transition: color 0.15s;
+            margin-right: 12px;
         }
 
         .link:hover {
             color: #1e40af;
+        }
+
+        .link-download {
+            color: #059669;
+        }
+
+        .link-download:hover {
+            color: #047857;
+        }
+
+        .resume-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .card-footer {
@@ -207,6 +222,16 @@
             .card-header-left h2 {
                 font-size: 18px;
             }
+
+            .resume-actions {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .link {
+                margin-right: 0;
+            }
         }
 
         @media (max-width: 640px) {
@@ -264,9 +289,14 @@
                 <td class="text-gray-500">{{ $user->address ?? 'N/A' }}</td>
                 <td class="whitespace-nowrap text-gray-500">
                     @if($user->resume_file_name)
-                        <a href="{{ asset('storage/resumes/' . $user->resume_file_name) }}" target="_blank" class="link">
-                            View Resume
-                        </a>
+                        <div class="resume-actions">
+                            <a href="{{ asset('storage/resumes/' . $user->resume_file_name) }}" target="_blank" class="link">
+                                View
+                            </a>
+                            <a href="{{ asset('storage/resumes/' . $user->resume_file_name) }}" download="{{ $user->name }}_Resume" class="link link-download">
+                                Download
+                            </a>
+                        </div>
                     @else
                         N/A
                     @endif
