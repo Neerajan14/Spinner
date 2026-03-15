@@ -245,52 +245,51 @@
             </div>
 
             <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Prize Won</th>
-                            <th>Prize Value</th>
-                            <th>Full Name</th>
-                            <th>Phone Number</th>
-                            <th>Email Address</th>
-                            <th>Interested In</th>
-                            <th>Address</th>
-                            <th>Resume</th>
-                            <th>Won At</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($userWins as $win)
-                        <tr>
-                            <td class="whitespace-nowrap">{{ $win->id }}</td>
-                            <td class="whitespace-nowrap font-medium">{{ $win->prize_label }}</td>
-                            <td class="whitespace-nowrap text-green-600">{{ $win->prize_price }}</td>
-                            <td class="whitespace-nowrap">{{ $win->user_name }}</td>
-                            <td class="whitespace-nowrap text-gray-500">{{ $win->user_number }}</td>
-                            <td class="whitespace-nowrap text-gray-500">{{ $win->user_email }}</td>
-                            <td class="whitespace-nowrap text-gray-500">{{ $win->user_interested }}</td>
-                            <td class="text-gray-500">{{ $win->user_address ?? 'N/A' }}</td>
-                            <td class="whitespace-nowrap text-gray-500">
-                                @if($win->user_resume_file_name)
-                                    <a href="{{ asset('storage/resumes/' . $win->user_resume_file_name) }}" target="_blank" class="link">
-                                        View Resume
-                                    </a>
-                                @else
-                                    N/A
-                                @endif
-                            </td>
-                            <td class="whitespace-nowrap text-gray-500">{{ \Carbon\Carbon::parse($win->created_at)->format('M d, Y H:i') }}</td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="10" class="text-center text-gray-500">No wins yet</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Prize Won</th>
+                <th>Prize Value</th>
+                <th>Full Name</th>
+                <th>Phone Number</th>
+                <th>Email Address</th>
+                <th>Interested In</th>
+                <th>Address</th>
+                <th>Resume</th>
+                <th>Won At</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($userWins as $index => $win)
+            <tr>
+                <td class="whitespace-nowrap">{{ $index + 1 }}</td>
+                <td class="whitespace-nowrap font-medium">{{ $win->prize_label }}</td>
+                <td class="whitespace-nowrap text-green-600">{{ $win->prize_price }}</td>
+                <td class="whitespace-nowrap">{{ $win->user_name }}</td>
+                <td class="whitespace-nowrap text-gray-500">{{ $win->user_number }}</td>
+                <td class="whitespace-nowrap text-gray-500">{{ $win->user_email }}</td>
+                <td class="whitespace-nowrap text-gray-500">{{ $win->user_interested }}</td>
+                <td class="text-gray-500">{{ $win->user_address ?? 'N/A' }}</td>
+                <td class="whitespace-nowrap text-gray-500">
+                    @if($win->user_resume_file_name)
+                        <a href="{{ asset('storage/resumes/' . $win->user_resume_file_name) }}" target="_blank" class="link">
+                            View Resume
+                        </a>
+                    @else
+                        N/A
+                    @endif
+                </td>
+                <td class="whitespace-nowrap text-gray-500">{{ \Carbon\Carbon::parse($win->created_at)->format('M d, Y H:i') }}</td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="10" class="text-center text-gray-500">No wins yet</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
             <div class="card-footer">
                 {{ $userWins->links() }}
             </div>

@@ -240,47 +240,47 @@
             </div>
 
             <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Full Name</th>
-                            <th>Phone Number</th>
-                            <th>Email Address</th>
-                            <th>Interested In</th>
-                            <th>Address</th>
-                            <th>Resume</th>
-                            <th>Joined</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($users as $user)
-                        <tr>
-                            <td class="whitespace-nowrap">{{ $user->id }}</td>
-                            <td class="whitespace-nowrap font-medium">{{ $user->name }}</td>
-                            <td class="whitespace-nowrap text-gray-500">{{ $user->number }}</td>
-                            <td class="whitespace-nowrap text-gray-500">{{ $user->email }}</td>
-                            <td class="whitespace-nowrap text-gray-500">{{ $user->interested }}</td>
-                            <td class="text-gray-500">{{ $user->address ?? 'N/A' }}</td>
-                            <td class="whitespace-nowrap text-gray-500">
-                                @if($user->resume_file_name)
-                                    <a href="{{ asset('storage/resumes/' . $user->resume_file_name) }}" target="_blank" class="link">
-                                        View Resume
-                                    </a>
-                                @else
-                                    N/A
-                                @endif
-                            </td>
-                            <td class="whitespace-nowrap text-gray-500">{{ $user->created_at->format('M d, Y') }}</td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="8" class="text-center text-gray-500">No users found</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Phone Number</th>
+                <th>Email Address</th>
+                <th>Interested In</th>
+                <th>Address</th>
+                <th>Resume</th>
+                <th>Joined</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($users as $index => $user)
+            <tr>
+                <td class="whitespace-nowrap">{{ $index + 1 }}</td>
+                <td class="whitespace-nowrap font-medium">{{ $user->name }}</td>
+                <td class="whitespace-nowrap text-gray-500">{{ $user->number }}</td>
+                <td class="whitespace-nowrap text-gray-500">{{ $user->email }}</td>
+                <td class="whitespace-nowrap text-gray-500">{{ $user->interested }}</td>
+                <td class="text-gray-500">{{ $user->address ?? 'N/A' }}</td>
+                <td class="whitespace-nowrap text-gray-500">
+                    @if($user->resume_file_name)
+                        <a href="{{ asset('storage/resumes/' . $user->resume_file_name) }}" target="_blank" class="link">
+                            View Resume
+                        </a>
+                    @else
+                        N/A
+                    @endif
+                </td>
+                <td class="whitespace-nowrap text-gray-500">{{ $user->created_at->format('M d, Y') }}</td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="8" class="text-center text-gray-500">No users found</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
 
             <div class="card-footer">
                 {{ $users->links() }}
